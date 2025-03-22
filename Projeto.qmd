@@ -1,0 +1,147 @@
+---
+title: ""
+date: "2024-09-31"
+keep-tex: true
+format:
+  pdf:
+    documentclass: article
+    classoption: [oneclumn]
+    lof: false
+    lot: false
+    geometry:
+      - left=35mm
+      - right=35mm
+      - top=15mm
+      - bottom=20mm
+      - noheadfoot
+    include-in-header:
+      - text: |
+          \usepackage{inputenc}
+---
+
+# Universidade Federal de Pernambuco
+\vspace{-.4cm}
+# Centro de Ciências Exatas e da Natureza
+\vspace{-.4cm}
+# Departamento de Estatística
+
+\vspace{.5cm}
+
+
+```{r, eval=TRUE, echo=FALSE}
+data <- format(Sys.Date(), "%d de %B de %Y")
+```
+
+
+## TÓPICOS ESPECIAIS EM ESTATÍSTICA COMPUTACIONAL
+
+
+\vspace{.5cm}
+
+**Data:**
+`r data`
+
+
+\vspace{.5cm}
+
+# Introdução
+
+Prever possíveis falhas em máquinas e equipamentos industriais é uma ótima forma de combater um dos problemas mais recorrentes em empresas. Quando um equipamento falha ele pode acarretar vários problemas que podem gerar problemas de produção, acidentes e grandes percas financeiras, e a melhor forma de evitar isso é prevenindo esses erros.
+Com isso, esse trabalho tem como objetivo buscar um forma de prever essas falhas através de modelos de predição com aprendizado de máquina utilizando dados sintéticos reflete a manutenção preditiva real encontrada no setor, onde são apresentados variáveis que possam nos ajudar a chegar o mais próximo do resultado desejado e aumentar o máximo possível a possibilidade de evitar as falhas nas maquinas.
+
+# Fundamentos Teóricos e Metodológicos
+
+O conjunto de dados utilizado nesse projeto se chama "Explainable Artificial Intelligence for Predictive Maintenance Applications" e é composto por 14 variáveis e 10.000 observações. Foi utilizada a linguagem Python para obter as análises e a aplicação dos modelos de Árvore de Decisão e Floresta Aleatória, a variável de classificação é a variável binária “Target” que apresenta 0 para as observações que a maquina apresentou falha e 1 para as que não apresentaram falha.
+
+### Variáveis utilizadas:
+
+ - **UID**: identificador único que varia de 1 a 10000.
+ 
+ - **productID**: consistindo em uma letra L, M ou H para baixo (50% de todos os produtos), médio (30%) e alto (20%) como variantes de qualidade do produto e um número de série específico da variante.
+ 
+ - **Type**: Apresenta somente as variantes de qualidade de produto (L, M e H).
+ 
+ - **air temperature [K]**: gerada usando um processo de caminhada aleatória posteriormente normalizada para um desvio padrão de 2 K em torno de 300 K.
+ 
+ - **process temperature [K]**: gerada usando um processo de caminhada aleatória normalizado para um desvio padrão de 1 K, adicionado à temperatura do ar mais 10 K.
+ 
+ - **rotational speed [rpm]**: calculada a partir da potência de 2860 W, sobreposta com um ruído normalmente distribuído.
+ 
+ - **torque [Nm]**: os valores de torque são normalmente distribuídos em torno de 40 Nm com um Ïƒ = 10 Nm e sem valores negativos.
+ 
+ - **tool wear [min]**: As variantes de qualidade H/M/L adicionam 5/3/2 minutos de desgaste da ferramenta à ferramenta usada no processo. 
+ 
+ - **Failure Type**: Indica o tipo de falha da máquina. Não utilizamos essa variável pois também é uma variável de classificação.
+ 
+ 
+# Aplicação
+
+De início vamos apresentar a analise exploratória dos dados para que possamos entender como os dados a distribuição dos dados de cada variável presente no conjunto de dados.
+
+### Análise Exploratória
+
+
+```{r, echo=FALSE}
+library(knitr)
+library(readxl)
+
+dados <- read_excel("dados.xlsx")
+kable(dados, caption = "Medidas descritivas das variáveis númericas")
+```
+
+
+
+
+![Gráficos com de distribuição das variáveis númericas](graficos.png)
+
+Na **Table 1** podemos observar que as variáveis *“Air temperature [K]”* e *“Process temperature [K]”* apresentam baixa variação na distribuição dos dados quando observamos os quartis, já as demais variáveis possuem grande variação, todas essas afirmações podem ser observadas na **Figure 1**.
+
+![Gráfico com a distribuição da váriavel "Type"](graficos_categoricas.png){width=80%}
+
+A única variável categórica que temos no conjunto de dados é a várivavel *”Type”* que classifica os produtos por qualidade, sendo L para baixa qualidade, M para média qualidade e H para Alta qualidade. 
+Na **Figure 2** podemos ver que as maquinas de baixa qualidade são as mais presentes nos dados.
+
+
+
+\newpage
+### Aplicação do modelo
+
+Para essa estudo escolhemos os modelos de **Árvore de decisão** e **Floresta aleatória** para comparar qual modelo apresenta melhor desempenho resolver nosso problema.
+
+::: {layout-ncol=2}
+![Métricas do modelo de Árvore de decisão](dt_table.png)
+
+![Métricas do modelo de Floresta Aleatória](rf_table.png)
+
+![Curva de aprendizado da Árvore de decisão](dt_learn.png)
+
+![Curva de aprendizado da Floresta Aleatória](rf_learn.png)
+
+![Matriz de confusão da Árvore de decisão](mc_dt.png)
+
+![Matriz de confusão da Floresta Aleatória](mc_rf.png)
+
+:::
+
+Nas imagens acima podemos ver que o modelo que apresentou melhor desempenho foi o modelo de árvore aleatória, isso pode ser influenciado pela dimensão dos dados já que o modelo tem melhor desempenho para grandes quantidades de observações se comparado com o modelo de árvores de decisão.
+Nas matrizes de confusão podemos observar que apesar do desempenho da floresta aleatória se sobressair em relação a árvore de decisão, podemos que o modelo obteve um resultado muito baixo para classificar as máquinas com falha, identificando apensa 56% das máquinas. 
+
+
+\newpage
+# Conclusão
+
+Nesse estudo utilizamos os dados em modelos de classificação e tentamos chegar ao melhor resultado possível comparando esses dois modelos e observando o desempenho de ambos para encontrarmos uma forma de classificar maquinas com possíveis futuras falhas com objetivo de diminuir problemas nas empresas. 
+
+Vimos que modelo de floresta aleatória obteve um resultado melhor se comparado com o resultado do modelo de árvore de decisão, contudo, não podemos considerar esse resultado o melhor possível podemos pensar: Qual foi o problema? 
+
+Mesmo com a grande quantidade de observações e variáveis que utilizamos, podemos perceber que os resultados não apresentaram a melhor performance possível dos modelos, contudo tivemos a oportunidade de comparar o desempenho dos dois modelos se testados com o mesmo conjunto de dados e observar suas performances.
+
+
+# Contribuição da equipe
+
+ - *Edgar Carlos Rodrigue de Oliveira:* Fez a ànalise exploratória e aplicou o modelo de árvore aleatória (50% de contribuição).
+ - *Vitória Karolinny dos Santos Gonçalves:* Aplicou o modelo de Floresta Aleatória e criou o relatório e slide (50% de contribuição).
+ 
+# Referências
+
+ - Link para ter acesso aos dados: https://archive.ics.uci.edu/dataset/601/ai4i+2020+predictive+maintenance+dataset
